@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
+             version="3.2">
+    <persistence-unit name="default">
+
+        <class>com.project.core.mysql.entities.Actor</class>
+        <class>com.project.core.mysql.entities.Day</class>
+        <class>com.project.core.mysql.entities.Jouer</class>
+        <class>com.project.core.mysql.entities.Movie</class>
+        <class>com.project.core.mysql.entities.Owner</class>
+        <class>com.project.core.mysql.entities.Posseder</class>
+        <class>com.project.core.mysql.entities.Visionner</class>
+
+        <properties>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/cinemas"/>
+            <property name="jakarta.persistence.jdbc.user" value="root"/>
+            <property name="jakarta.persistence.jdbc.password" value="12345678"/>
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+        </properties>
+    </persistence-unit>
+</persistence>
