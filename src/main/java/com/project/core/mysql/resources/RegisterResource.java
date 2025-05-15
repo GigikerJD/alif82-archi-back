@@ -19,54 +19,35 @@ import java.util.Map;
 public class RegisterResource {
 
     private EntityManagerFactory emf = Persistence.createEntityManagerFactory("default");
-    private EntityManager em = emf.createEntityManager();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response register(Register register) {
-        if (register.getEmail() == null || register.getFirstname() == null ||
-                register.getLastname() == null || register.getPassword() == null) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "Missing required fields");
-            return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
-        }
-
-
-        Owner existingOwner = em.find(Owner.class, register.getEmail());
-        if (existingOwner != null) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "User already exists with this email");
-            return Response.status(Response.Status.CONFLICT).entity(response).build();
-        }
-
+        EntityManager em = null;
+        Map<String, Object> response = new HashMap<>();
         try {
-            Owner newOwner = new Owner();
-            newOwner.setEmail(register.getEmail());
-            newOwner.setFirstname(register.getFirstname());
-            newOwner.setLastname(register.getLastname());
+            em = emf.createEntityManager();
+            Owner knownOwner = em.find(Owner.class, register.getEmail());
 
-            if (register.getDOB() != null) {
-                newOwner.setDob(register.getDOB());
+            if (knownOwner != null) {
+                response.put("type", "error");
+                response.put("message", "Email déjà enregistré");
+                return Response.status(Response.Status.UNAUTHORIZED).entity(response).build();
             }
-
-            em.getTransaction().begin();
-            em.persist(newOwner);
-            em.getTransaction().commit();
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "Registration successful");
-            response.put("email", register.getEmail());
-            return Response.status(Response.Status.CREATED).entity(response).build();
-
+            
+            response.put("type", "success");
+            response.put("message", "Vous êtes inscrit");
+            return Response.ok().entity(response).build();
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "Registration failed: " + e.getMessage());
+            // Log the exception details here
+            response.put("type", "error");
+            response.put("message", "Erreur lors de l'inscription: " + e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).build();
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
         }
     }
 }

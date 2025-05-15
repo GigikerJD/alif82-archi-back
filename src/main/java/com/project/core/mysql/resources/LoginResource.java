@@ -4,6 +4,7 @@ import com.project.core.mysql.entities.Owner;
 import com.project.core.mysql.models.Login;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.Persistence;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -25,18 +26,32 @@ public class LoginResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(Login login) {
-        var owner = em.find(Owner.class, "select * from owner where email = '" + login.getEmail() + "'");
-        if (owner == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity("Owner wasn't found").build();
+        var response = new HashMap<String, Object>();
+
+        try {
+            // Utilisation de paramètres nommés pour éviter les erreurs de syntaxe et les problèmes de sécurité
+            Owner owner = em.createQuery("SELECT o FROM Owner o WHERE o.email = :email", Owner.class)
+                    .setParameter("email", login.getEmail())
+                    .getSingleResult();
+
+            // Comparaison des mots de passe (en texte brut pour l'exemple, utilisez le hachage en production)
+            if (!owner.getPassword().equals(login.getPassword())) {
+                response.put("type", "error");
+                response.put("message", "Votre identifiant ou mot de passe est incorrect");
+                return Response.status(Response.Status.UNAUTHORIZED).entity(response).build();
+            }
+
+            response.put("type", "success");
+            response.put("message", "Vous êtes connecté");
+            return Response.ok(response).build();
+        } catch (NoResultException e) {
+            response.put("type", "error");
+            response.put("message", "Utilisateur inconnu");
+            return Response.status(Response.Status.NOT_FOUND).entity(response).build();
+        } catch (Exception e) {
+            response.put("type", "error");
+            response.put("message", "Une erreur est survenue lors de la tentative de connexion");
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).build();
         }
-        if(!login.getPassword().equals(owner)) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Wrong password").build();
-        }
-        Map<String, Object> data = new HashMap<>();
-        data.put("message", "Vous êtes connecté");
-        data.put("email", login.getEmail());
-        data.put("firstname", owner.getFirstname());
-        data.put("lastname", owner.getLastname());
-        return Response.ok(data).build();
     }
 }

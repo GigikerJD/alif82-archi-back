@@ -1,6 +1,5 @@
 package com.project.core.mysql.resources;
 
-
 import com.project.core.mysql.entities.Acteur;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -13,41 +12,69 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.HashMap;
+import java.util.List;
 
 @Path("/actors")
 public class ActeurResource {
 
     private EntityManagerFactory emf = Persistence.createEntityManagerFactory("default");
-    private EntityManager em = emf.createEntityManager();
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getActors() {
-        var actors = em.createQuery("SELECT a FROM Acteur a", Acteur.class).getResultList();
-        var response = new HashMap<String, Object>();
-        if (actors.isEmpty()) {
+        EntityManager em = null;
+        HashMap<String, Object> response = new HashMap<>();
+        try {
+            em = emf.createEntityManager();
+            List<Acteur> actors = em.createQuery("SELECT a FROM Acteur a", Acteur.class).getResultList();
+
+            if (actors.isEmpty()) {
+                response.put("type", "error");
+                response.put("message", "No actors found");
+                return Response.status(Response.Status.NOT_FOUND).entity(response).build();
+            }
+
+            response.put("type", "success");
+            response.put("actors", actors);
+            return Response.ok(response).build();
+        } catch (Exception e) {
             response.put("type", "error");
-            response.put("message", "No actors found");
-            return Response.status(Response.Status.NOT_FOUND).entity(response).build();
+            response.put("message", "Error retrieving actors: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).build();
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
         }
-        response.put("type", "success");
-        response.put("actors", actors);
-        return Response.status(Response.Status.OK).entity(response).build();
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getActor(@PathParam("id") int id) {
-        var actor = em.find(Acteur.class, id);
-        var response = new HashMap<String, Object>();
-        if (actor == null) {
+        EntityManager em = null;
+        HashMap<String, Object> response = new HashMap<>();
+        try {
+            em = emf.createEntityManager();
+            Acteur actor = em.find(Acteur.class, id);
+
+            if (actor == null) {
+                response.put("type", "error");
+                response.put("message", "No actor found");
+                return Response.status(Response.Status.NOT_FOUND).entity(response).build();
+            }
+
+            response.put("type", "success");
+            response.put("actor", actor);
+            return Response.ok(response).build();
+        } catch (Exception e) {
             response.put("type", "error");
-            response.put("message", "No actor found");
-            return Response.status(Response.Status.NOT_FOUND).entity(response).build();
+            response.put("message", "Error retrieving actor: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).build();
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
         }
-        response.put("type", "success");
-        response.put("actor", actor);
-        return Response.status(Response.Status.OK).entity(response).build();
     }
 }

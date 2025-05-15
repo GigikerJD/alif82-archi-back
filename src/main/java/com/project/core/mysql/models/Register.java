@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class Register {
 
-    private String firstname, lastname, email, password, adresse, movieTheatre;
+    private String firstname, lastname, email, password, adresse, movieTheatre, city;
     private LocalDate DOB;
 
     public Register() {}
@@ -69,6 +69,12 @@ public class Register {
 
     public void setMovieTheatre(String movieTheatre) {
         this.movieTheatre = movieTheatre;
+    }
+    public String getCity() {
+        return city;
+    }
+    public void setCity(String city) {
+        this.city = city;
     }
 }
 

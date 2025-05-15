@@ -25,6 +25,10 @@ public class Owner {
     private String adresse;
 
     @Size(max = 255)
+    @Column(name = "city")
+    private String city;
+
+    @Size(max = 255)
     @Column(name = "lastname")
     private String lastname;
 
@@ -61,6 +65,14 @@ public class Owner {
 
     public void setAdresse(String adresse) {
         this.adresse = adresse;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public String getLastname() {
