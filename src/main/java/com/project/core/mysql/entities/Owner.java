@@ -17,6 +17,10 @@ public class Owner {
     private String email;
 
     @Size(max = 255)
+    @Column(name = "password")
+    private String password;
+
+    @Size(max = 255)
     @Column(name = "adresse")
     private String adresse;
 
@@ -41,6 +45,14 @@ public class Owner {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getAdresse() {

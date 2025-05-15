@@ -1,6 +1,9 @@
 package com.project.core.mysql.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
@@ -9,7 +12,6 @@ import java.time.LocalDate;
 @Table(name = "acteur")
 public class Acteur {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 

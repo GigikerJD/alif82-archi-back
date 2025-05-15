@@ -5,14 +5,13 @@
              version="3.2">
     <persistence-unit name="default">
 
-        <class>com.project.core.mysql.entities.Actor</class>
+        <class>com.project.core.mysql.entities.Acteur</class>
         <class>com.project.core.mysql.entities.Day</class>
         <class>com.project.core.mysql.entities.Jouer</class>
         <class>com.project.core.mysql.entities.Movie</class>
         <class>com.project.core.mysql.entities.Owner</class>
         <class>com.project.core.mysql.entities.Posseder</class>
         <class>com.project.core.mysql.entities.Visionner</class>
-        <class>com.project.core.mysql.entities.Acteur</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/cinemas"/>

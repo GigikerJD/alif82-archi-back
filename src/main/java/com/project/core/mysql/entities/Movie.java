@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "movie")
@@ -41,7 +42,7 @@ public class Movie {
     private LocalDate endDate;
 
     @Column(name = "showDay")
-    private LocalDate showDay;
+    private LocalTime showDay;
 
     public String getTitle() {
         return title;
@@ -107,11 +108,11 @@ public class Movie {
         this.endDate = endDate;
     }
 
-    public LocalDate getShowDay() {
+    public LocalTime getShowDay() {
         return showDay;
     }
 
-    public void setShowDay(LocalDate showDay) {
+    public void setShowDay(LocalTime showDay) {
         this.showDay = showDay;
     }
 
